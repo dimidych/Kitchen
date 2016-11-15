@@ -1,0 +1,21 @@
+﻿@model MvcStudy.Models.Menu.MenuViewModel
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title" id="myModalLabel">Вы точно хотите удалить блюдо из меню за @Model.DateView ?</h4>
+</div>
+
+<div class="modal-body">
+    @Html.DisplayFor(model => model.MealNameView)
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.id)
+    
+    <div class="modal-footer">
+        <input class="btn btn-primary" type="submit" value="Удалить блюдо из меню" />
+        <button class="btn" data-dismiss="modal">Отмена</button>
+    </div>
+}

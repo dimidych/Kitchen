@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="kitchenModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="sysdiagrams">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+    <Property Name="principal_id" Type="int" Nullable="false" />
+    <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="version" Type="int" />
+    <Property Name="definition" Type="varbinary(max)" />
+  </EntityType>
+  <EntityType Name="tbl_duty">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="bigint" Nullable="false" />
+    <Property Name="duty_date" Type="date" Nullable="false" />
+    <Property Name="id_people" Type="bigint" Nullable="false" />
+  </EntityType>
+  <EntityType Name="tbl_group">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="bigint" Nullable="false" />
+    <Property Name="group_name" Type="nvarchar" MaxLength="255" Nullable="false" />
+    <Property Name="is_admin" Type="bit" />
+  </EntityType>
+  <EntityType Name="tbl_meal">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="bigint" Nullable="false" />
+    <Property Name="meal_name" Type="nvarchar" MaxLength="255" Nullable="false" />
+  </EntityType>
+  <EntityType Name="tbl_menu">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="bigint" Nullable="false" />
+    <Property Name="date" Type="date" Nullable="false" />
+    <Property Name="id_meal" Type="bigint" Nullable="false" />
+  </EntityType>
+  <EntityType Name="tbl_menu_selection">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="bigint" Nullable="false" />
+    <Property Name="id_menu" Type="bigint" Nullable="false" />
+    <Property Name="id_people" Type="bigint" Nullable="false" />
+    <Property Name="qty" Type="smallint" />
+  </EntityType>
+  <EntityType Name="tbl_people">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="bigint" Nullable="false" />
+    <Property Name="people_name" Type="nvarchar" MaxLength="255" Nullable="false" />
+    <Property Name="takes_meal" Type="bit" />
+    <Property Name="excepts_duty" Type="bit" />
+    <Property Name="id_group" Type="bigint" />
+    <Property Name="hased_pwd" Type="nvarchar(max)" />
+    <Property Name="email" Type="nvarchar" MaxLength="255" />
+  </EntityType>
+  <EntityType Name="tbl_settings">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" Nullable="false" />
+    <Property Name="ckey" Type="nvarchar" MaxLength="50" />
+    <Property Name="BaseHostAddress" Type="nvarchar(max)" />
+    <Property Name="MailHost" Type="nvarchar(max)" />
+    <Property Name="MailHostLogin" Type="nvarchar(max)" />
+    <Property Name="MailHostPwd" Type="nvarchar(max)" />
+    <Property Name="MailHostPort" Type="int" />
+    <Property Name="MailHostUseSsl" Type="bit" />
+    <Property Name="MailSubjectPattern" Type="nvarchar(max)" />
+    <Property Name="MailBodyPattern" Type="nvarchar(max)" />
+    <Property Name="CookieName" Type="nvarchar" MaxLength="255" />
+  </EntityType>
+  <EntityType Name="tbl_weekday">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="bigint" Nullable="false" />
+    <Property Name="weekday_name" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="is_duty_day" Type="bit" />
+  </EntityType>
+  <Association Name="FK_tbl_duty_tbl_people">
+    <End Role="tbl_people" Type="Self.tbl_people" Multiplicity="1" />
+    <End Role="tbl_duty" Type="Self.tbl_duty" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="tbl_people">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="tbl_duty">
+        <PropertyRef Name="id_people" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_tbl_menu_selection_tbl_menu">
+    <End Role="tbl_menu" Type="Self.tbl_menu" Multiplicity="1" />
+    <End Role="tbl_menu_selection" Type="Self.tbl_menu_selection" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="tbl_menu">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="tbl_menu_selection">
+        <PropertyRef Name="id_menu" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_tbl_menu_selection_tbl_people">
+    <End Role="tbl_people" Type="Self.tbl_people" Multiplicity="1" />
+    <End Role="tbl_menu_selection" Type="Self.tbl_menu_selection" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="tbl_people">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="tbl_menu_selection">
+        <PropertyRef Name="id_people" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_tbl_menu_tbl_meal1">
+    <End Role="tbl_meal" Type="Self.tbl_meal" Multiplicity="1" />
+    <End Role="tbl_menu" Type="Self.tbl_menu" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="tbl_meal">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="tbl_menu">
+        <PropertyRef Name="id_meal" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_tbl_people_tbl_group">
+    <End Role="tbl_group" Type="Self.tbl_group" Multiplicity="0..1" />
+    <End Role="tbl_people" Type="Self.tbl_people" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="tbl_group">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="tbl_people">
+        <PropertyRef Name="id_group" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="kitchenModelStoreContainer">
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="tbl_duty" EntityType="Self.tbl_duty" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="tbl_group" EntityType="Self.tbl_group" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="tbl_meal" EntityType="Self.tbl_meal" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="tbl_menu" EntityType="Self.tbl_menu" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="tbl_menu_selection" EntityType="Self.tbl_menu_selection" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="tbl_people" EntityType="Self.tbl_people" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="tbl_settings" EntityType="Self.tbl_settings" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="tbl_weekday" EntityType="Self.tbl_weekday" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_tbl_duty_tbl_people" Association="Self.FK_tbl_duty_tbl_people">
+      <End Role="tbl_people" EntitySet="tbl_people" />
+      <End Role="tbl_duty" EntitySet="tbl_duty" />
+    </AssociationSet>
+    <AssociationSet Name="FK_tbl_menu_selection_tbl_menu" Association="Self.FK_tbl_menu_selection_tbl_menu">
+      <End Role="tbl_menu" EntitySet="tbl_menu" />
+      <End Role="tbl_menu_selection" EntitySet="tbl_menu_selection" />
+    </AssociationSet>
+    <AssociationSet Name="FK_tbl_menu_selection_tbl_people" Association="Self.FK_tbl_menu_selection_tbl_people">
+      <End Role="tbl_people" EntitySet="tbl_people" />
+      <End Role="tbl_menu_selection" EntitySet="tbl_menu_selection" />
+    </AssociationSet>
+    <AssociationSet Name="FK_tbl_menu_tbl_meal1" Association="Self.FK_tbl_menu_tbl_meal1">
+      <End Role="tbl_meal" EntitySet="tbl_meal" />
+      <End Role="tbl_menu" EntitySet="tbl_menu" />
+    </AssociationSet>
+    <AssociationSet Name="FK_tbl_people_tbl_group" Association="Self.FK_tbl_people_tbl_group">
+      <End Role="tbl_group" EntitySet="tbl_group" />
+      <End Role="tbl_people" EntitySet="tbl_people" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

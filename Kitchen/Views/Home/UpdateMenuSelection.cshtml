@@ -1,0 +1,45 @@
+﻿@model MvcStudy.Models.Home.FutureWeekUserMenuViewModel
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title" id="myModalLabel">Отметьте галочками желаемые блюда</h4>
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="modal-body">
+        <div>
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        </div> 
+        @Html.HiddenFor(model => model.UseDateFilter)
+        @Html.HiddenFor(model => model.DateFilter)
+        <div class="form-horizontal">
+            @for (var i = 0; i < Model.NextWeekMenuForUser.Count; i++)
+            {
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="checkbox">
+                            <span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span>
+                            <label>
+                                @Html.CheckBoxFor(model => model.NextWeekMenuForUser[i].Selected)
+                                @Html.HiddenFor(model => model.NextWeekMenuForUser[i].id)
+                                @Html.DisplayFor(model => model.NextWeekMenuForUser[i].MealNameView)
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        К-во :
+                        @Html.TextBoxFor(model => model.NextWeekMenuForUser[i].Qty, new {@type = "number", @min = 1, @max = 250, @step = 1, @style = "width:70px;"})
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <input class="btn btn-primary" type="submit" value="Изменить" />
+        <button class="btn" data-dismiss="modal">Отмена</button>
+    </div>
+}

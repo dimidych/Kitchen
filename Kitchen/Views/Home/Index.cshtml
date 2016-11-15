@@ -1,0 +1,148 @@
+﻿@using System.Linq;
+@using MvcStudy.Models
+@model MvcStudy.Models.Home.SelectedMenuCollectionViewModel
+
+@{
+    ViewBag.Title = "Они обедают в офисе";
+    var currentUser = ViewData["CurrentUser"];
+    var isAdmin = ViewData["IsCurrentUserInAdminRole"] ?? false;
+}
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        Они обедают в офисе c @Model.WeekDays[Model.WeekDays.Keys.Min()] по @Model.WeekDays[Model.WeekDays.Keys.Max()]
+    </div>
+    
+    <div class="panel-body">
+            <div class="row">
+                <div class="col-md-4">
+                    @if (Model.CheckIfFutureMenuExist && !Model.ForFutureMenu)
+                    {
+                        @Html.ActionLink("Они уже записались на будущую неделю!", "Index", "Home", new {getFutureMenu = true}, new {@class = "btn btn-success pull-left"})
+                    }
+                </div>
+                <div class="col-md-4">
+                    @if (Model.RecordsNumber > 0 && currentUser != null && (bool) isAdmin)
+                    {
+                        <div class="btn-group pull-right">
+                            <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true">
+                                Распечатать
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>@Html.ActionLink("График обедов по дням", "PrintMenuSelection", "Home", new { getFutureMenu = Model.ForFutureMenu },null)</li>
+                                <li>@Html.ActionLink("Количество выбранных блюд по дням", "PrintSelectedMeal", "Home", new { getFutureMenu = Model.ForFutureMenu },null)</li>
+                            </ul>
+                        </div>
+                    }
+                </div>
+                <div class="col-md-4">
+                    @if ( currentUser != null)
+                    {
+                        if ((bool) isAdmin)
+                        {
+                            <div class="btn-group pull-right">
+                                <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true">
+                                    Запись на обед
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    @if (Model.CheckIfFutureMenuExist)
+                                    {
+                                        <li>@Html.ActionLink("Записаться на обед", "AddOrUpdateAllMenuSelection", "Home")</li>
+                                    }
+                                    else
+                                    {
+                                        <li class="disabled">@Html.ActionLink("Записаться на обед", "AddOrUpdateAllMenuSelection", "Home")</li>
+                                    }
+
+                                    <li>@Html.ActionLink(Model.ForFutureMenu ? "Записать друзей на обед на будущей неделе" : "Записать друзей на обед на текущей неделе", "SignUnsigned", "Home")</li>
+                                </ul>
+                            </div>
+                        }
+                        else if ((((tbl_people) currentUser).takes_meal ?? false) && Model.CheckIfFutureMenuExist)
+                        {
+                            @Html.ActionLink("Записаться на обед", "AddOrUpdateAllMenuSelection", "Home", new {@class = "btn btn-danger pull-right"})
+                        }
+                    }
+                </div>
+            </div> 
+    </div>
+    
+    @if (Model.RecordsNumber > 0)
+    {
+        <table class="table table-bordered table-hover table-condensed">
+            <thead>
+            <tr>
+                <th class="success">
+                    №
+                </th>
+                <th class="warning">
+                    ФИО
+                </th>
+                @foreach (var date in Model.WeekDays.Keys)
+                {
+                    <th class="info">
+                        @Html.DisplayFor(model => model.WeekDays[date])
+                    </th>
+                }
+            </tr>  
+            </thead>
+
+            <tbody>
+            @{
+                var counter = 0;
+
+                foreach (var selectedMnu in Model.MenuSelectionForWeek)
+                {
+                    <tr>
+                        <th scope="row" class="success">
+                            @(++counter)
+                        </th>
+                        <th scope="row" class="warning">
+                            <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                            @Html.DisplayFor(modelItem => selectedMnu.User.people_name)
+                        </th>
+                        @foreach (var date in Model.WeekDays.Keys)
+                        {
+                            <td>
+                                @foreach (var menu in selectedMnu.MenuSelectionGroup.Where(x => x.tbl_menu.date == date))
+                                {
+                                    <div>
+                                        <span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span>
+                                        @Html.DisplayFor(modelItem => menu.tbl_menu.tbl_meal.meal_name)
+                                        <span class="badge">
+                                        @Html.DisplayFor(modelItem => menu.qty)
+                                        </span>
+                                    </div>
+                                }
+
+                                @if (!Model.CheckWhetherMenuExistByDate[date])
+                                {
+                                    <div>
+                                        Меню не назначено
+                                    </div>
+                                }
+                                else if ((currentUser != null && (bool) isAdmin && date.Date >= DateTime.Now.Date)
+                                         || (currentUser != null && ((tbl_people) currentUser).id == selectedMnu.User.id
+                                             && Model.CheckIfFutureMenuExist && Model.ForFutureMenu))
+                                {
+                                    <div>
+                                        @Html.ActionLink("Изменить", "UpdateMenuSelection", new {selectedDate = date, userId = selectedMnu.User.id}, new {data_modal = "", @class = "btn btn-warning btn-xs pull-left"})
+                                    </div>
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+    }
+    
+    <div class="panel-footer">
+        @Html.DisplayFor(model => model.RecordsNumberStr)
+    </div>
+</div> 
+
+

@@ -1,0 +1,500 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="kitchenModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
+        <EntityType Name="tbl_duty">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="bigint" Nullable="false" />
+          <Property Name="duty_date" Type="date" Nullable="false" />
+          <Property Name="id_people" Type="bigint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="tbl_group">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="bigint" Nullable="false" />
+          <Property Name="group_name" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="is_admin" Type="bit" />
+        </EntityType>
+        <EntityType Name="tbl_meal">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="bigint" Nullable="false" />
+          <Property Name="meal_name" Type="nvarchar" MaxLength="255" Nullable="false" />
+        </EntityType>
+        <EntityType Name="tbl_menu">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="bigint" Nullable="false" />
+          <Property Name="date" Type="date" Nullable="false" />
+          <Property Name="id_meal" Type="bigint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="tbl_menu_selection">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="bigint" Nullable="false" />
+          <Property Name="id_menu" Type="bigint" Nullable="false" />
+          <Property Name="id_people" Type="bigint" Nullable="false" />
+          <Property Name="qty" Type="smallint" />
+        </EntityType>
+        <EntityType Name="tbl_people">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="bigint" Nullable="false" />
+          <Property Name="people_name" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="takes_meal" Type="bit" />
+          <Property Name="excepts_duty" Type="bit" />
+          <Property Name="id_group" Type="bigint" />
+          <Property Name="hased_pwd" Type="nvarchar(max)" />
+          <Property Name="email" Type="nvarchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="tbl_settings">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" />
+          <Property Name="ckey" Type="nvarchar" MaxLength="50" />
+          <Property Name="BaseHostAddress" Type="nvarchar(max)" />
+          <Property Name="MailHost" Type="nvarchar(max)" />
+          <Property Name="MailHostLogin" Type="nvarchar(max)" />
+          <Property Name="MailHostPwd" Type="nvarchar(max)" />
+          <Property Name="MailHostPort" Type="int" />
+          <Property Name="MailHostUseSsl" Type="bit" />
+          <Property Name="MailSubjectPattern" Type="nvarchar(max)" />
+          <Property Name="MailBodyPattern" Type="nvarchar(max)" />
+          <Property Name="CookieName" Type="nvarchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="tbl_weekday">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="bigint" Nullable="false" />
+          <Property Name="weekday_name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="is_duty_day" Type="bit" />
+        </EntityType>
+        <Association Name="FK_tbl_duty_tbl_people">
+          <End Role="tbl_people" Type="Self.tbl_people" Multiplicity="1" />
+          <End Role="tbl_duty" Type="Self.tbl_duty" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbl_people">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tbl_duty">
+              <PropertyRef Name="id_people" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbl_menu_selection_tbl_menu">
+          <End Role="tbl_menu" Type="Self.tbl_menu" Multiplicity="1" />
+          <End Role="tbl_menu_selection" Type="Self.tbl_menu_selection" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbl_menu">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tbl_menu_selection">
+              <PropertyRef Name="id_menu" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbl_menu_selection_tbl_people">
+          <End Role="tbl_people" Type="Self.tbl_people" Multiplicity="1" />
+          <End Role="tbl_menu_selection" Type="Self.tbl_menu_selection" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbl_people">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tbl_menu_selection">
+              <PropertyRef Name="id_people" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbl_menu_tbl_meal1">
+          <End Role="tbl_meal" Type="Self.tbl_meal" Multiplicity="1" />
+          <End Role="tbl_menu" Type="Self.tbl_menu" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbl_meal">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tbl_menu">
+              <PropertyRef Name="id_meal" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbl_people_tbl_group">
+          <End Role="tbl_group" Type="Self.tbl_group" Multiplicity="0..1" />
+          <End Role="tbl_people" Type="Self.tbl_people" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbl_group">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tbl_people">
+              <PropertyRef Name="id_group" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="kitchenModelStoreContainer">
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbl_duty" EntityType="Self.tbl_duty" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbl_group" EntityType="Self.tbl_group" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbl_meal" EntityType="Self.tbl_meal" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbl_menu" EntityType="Self.tbl_menu" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbl_menu_selection" EntityType="Self.tbl_menu_selection" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbl_people" EntityType="Self.tbl_people" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbl_settings" EntityType="Self.tbl_settings" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbl_weekday" EntityType="Self.tbl_weekday" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_tbl_duty_tbl_people" Association="Self.FK_tbl_duty_tbl_people">
+            <End Role="tbl_people" EntitySet="tbl_people" />
+            <End Role="tbl_duty" EntitySet="tbl_duty" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbl_menu_selection_tbl_menu" Association="Self.FK_tbl_menu_selection_tbl_menu">
+            <End Role="tbl_menu" EntitySet="tbl_menu" />
+            <End Role="tbl_menu_selection" EntitySet="tbl_menu_selection" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbl_menu_selection_tbl_people" Association="Self.FK_tbl_menu_selection_tbl_people">
+            <End Role="tbl_people" EntitySet="tbl_people" />
+            <End Role="tbl_menu_selection" EntitySet="tbl_menu_selection" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbl_menu_tbl_meal1" Association="Self.FK_tbl_menu_tbl_meal1">
+            <End Role="tbl_meal" EntitySet="tbl_meal" />
+            <End Role="tbl_menu" EntitySet="tbl_menu" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbl_people_tbl_group" Association="Self.FK_tbl_people_tbl_group">
+            <End Role="tbl_group" EntitySet="tbl_group" />
+            <End Role="tbl_people" EntitySet="tbl_people" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="kitchenModel" Alias="Self" xmlns="http://schemas.microsoft.com/ado/2009/11/edm" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
+        <EntityType Name="sysdiagram">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="tbl_group">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int64" Nullable="false" />
+          <Property Name="group_name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="tbl_people" Relationship="kitchenModel.FK_tbl_people_tbl_group" FromRole="tbl_group" ToRole="tbl_people" />
+          <Property Name="is_admin" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="tbl_meal">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int64" Nullable="false" />
+          <Property Name="meal_name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="tbl_menu" Relationship="kitchenModel.FK_tbl_menu_tbl_meal1" FromRole="tbl_meal" ToRole="tbl_menu" />
+        </EntityType>
+        <EntityType Name="tbl_menu_selection">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int64" Nullable="false" />
+          <Property Name="id_menu" Type="Int64" Nullable="false" />
+          <Property Name="id_people" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="tbl_menu" Relationship="kitchenModel.FK_tbl_menu_selection_tbl_menu" FromRole="tbl_menu_selection" ToRole="tbl_menu" />
+          <NavigationProperty Name="tbl_people" Relationship="kitchenModel.FK_tbl_menu_selection_tbl_people" FromRole="tbl_menu_selection" ToRole="tbl_people" />
+          <Property Name="qty" Type="Byte" />
+        </EntityType>
+        <EntityType Name="tbl_weekday">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int64" Nullable="false" />
+          <Property Name="weekday_name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="is_duty_day" Type="Boolean" />
+        </EntityType>
+        <EntityContainer Name="kitchenEntities" annotation:LazyLoadingEnabled="true" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
+          <EntitySet Name="tbl_group" EntityType="Self.tbl_group" />
+          <EntitySet Name="tbl_meal" EntityType="Self.tbl_meal" />
+          <EntitySet Name="tbl_menu_selection" EntityType="Self.tbl_menu_selection" />
+          <EntitySet Name="tbl_weekday" EntityType="Self.tbl_weekday" />
+          <EntitySet Name="tbl_duty" EntityType="kitchenModel.tbl_duty" />
+          <EntitySet Name="tbl_menu" EntityType="kitchenModel.tbl_menu" />
+          <AssociationSet Name="FK_tbl_menu_tbl_meal1" Association="kitchenModel.FK_tbl_menu_tbl_meal1">
+            <End Role="tbl_meal" EntitySet="tbl_meal" />
+            <End Role="tbl_menu" EntitySet="tbl_menu" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbl_menu_selection_tbl_menu" Association="kitchenModel.FK_tbl_menu_selection_tbl_menu">
+            <End Role="tbl_menu" EntitySet="tbl_menu" />
+            <End Role="tbl_menu_selection" EntitySet="tbl_menu_selection" />
+          </AssociationSet>
+          <EntitySet Name="tbl_people" EntityType="kitchenModel.tbl_people" />
+          <AssociationSet Name="FK_tbl_duty_tbl_people" Association="kitchenModel.FK_tbl_duty_tbl_people">
+            <End Role="tbl_people" EntitySet="tbl_people" />
+            <End Role="tbl_duty" EntitySet="tbl_duty" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbl_people_tbl_group" Association="kitchenModel.FK_tbl_people_tbl_group">
+            <End Role="tbl_group" EntitySet="tbl_group" />
+            <End Role="tbl_people" EntitySet="tbl_people" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbl_menu_selection_tbl_people" Association="kitchenModel.FK_tbl_menu_selection_tbl_people">
+            <End Role="tbl_people" EntitySet="tbl_people" />
+            <End Role="tbl_menu_selection" EntitySet="tbl_menu_selection" />
+          </AssociationSet>
+          <EntitySet Name="tbl_settings" EntityType="kitchenModel.tbl_settings" />
+          </EntityContainer>
+        <EntityType Name="tbl_duty">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int64" Nullable="false" />
+          <Property Name="duty_date" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="id_people" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="tbl_people" Relationship="kitchenModel.FK_tbl_duty_tbl_people" FromRole="tbl_duty" ToRole="tbl_people" />
+        </EntityType>
+        <EntityType Name="tbl_menu">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int64" Nullable="false" />
+          <Property Name="date" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="id_meal" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="tbl_meal" Relationship="kitchenModel.FK_tbl_menu_tbl_meal1" FromRole="tbl_menu" ToRole="tbl_meal" />
+          <NavigationProperty Name="tbl_menu_selection" Relationship="kitchenModel.FK_tbl_menu_selection_tbl_menu" FromRole="tbl_menu" ToRole="tbl_menu_selection" />
+        </EntityType>
+        <Association Name="FK_tbl_menu_tbl_meal1">
+          <End Type="kitchenModel.tbl_meal" Role="tbl_meal" Multiplicity="1" />
+          <End Type="kitchenModel.tbl_menu" Role="tbl_menu" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbl_meal">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tbl_menu">
+              <PropertyRef Name="id_meal" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbl_menu_selection_tbl_menu">
+          <End Type="kitchenModel.tbl_menu" Role="tbl_menu" Multiplicity="1" />
+          <End Type="kitchenModel.tbl_menu_selection" Role="tbl_menu_selection" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbl_menu">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tbl_menu_selection">
+              <PropertyRef Name="id_menu" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="tbl_people">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int64" Nullable="false" />
+          <Property Name="people_name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="takes_meal" Type="Boolean" />
+          <Property Name="excepts_duty" Type="Boolean" />
+          <Property Name="id_group" Type="Int64" />
+          <Property Name="hased_pwd" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="email" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="tbl_duty" Relationship="kitchenModel.FK_tbl_duty_tbl_people" FromRole="tbl_people" ToRole="tbl_duty" />
+          <NavigationProperty Name="tbl_group" Relationship="kitchenModel.FK_tbl_people_tbl_group" FromRole="tbl_people" ToRole="tbl_group" />
+          <NavigationProperty Name="tbl_menu_selection" Relationship="kitchenModel.FK_tbl_menu_selection_tbl_people" FromRole="tbl_people" ToRole="tbl_menu_selection" />
+        </EntityType>
+        <Association Name="FK_tbl_duty_tbl_people">
+          <End Type="kitchenModel.tbl_people" Role="tbl_people" Multiplicity="1" />
+          <End Type="kitchenModel.tbl_duty" Role="tbl_duty" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbl_people">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tbl_duty">
+              <PropertyRef Name="id_people" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbl_people_tbl_group">
+          <End Type="kitchenModel.tbl_group" Role="tbl_group" Multiplicity="0..1" />
+          <End Type="kitchenModel.tbl_people" Role="tbl_people" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbl_group">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tbl_people">
+              <PropertyRef Name="id_group" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbl_menu_selection_tbl_people">
+          <End Type="kitchenModel.tbl_people" Role="tbl_people" Multiplicity="1" />
+          <End Type="kitchenModel.tbl_menu_selection" Role="tbl_menu_selection" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tbl_people">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tbl_menu_selection">
+              <PropertyRef Name="id_people" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="tbl_settings">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" />
+          <Property Name="ckey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="BaseHostAddress" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="MailHost" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="MailHostLogin" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="MailHostPwd" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="MailHostPort" Type="Int32" />
+          <Property Name="MailHostUseSsl" Type="Boolean" />
+          <Property Name="MailSubjectPattern" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="MailBodyPattern" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CookieName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+        </EntityType>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="kitchenModelStoreContainer" CdmEntityContainer="kitchenEntities">
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="kitchenModel.sysdiagram">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="definition" ColumnName="definition" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tbl_group">
+            <EntityTypeMapping TypeName="kitchenModel.tbl_group">
+              <MappingFragment StoreEntitySet="tbl_group">
+                <ScalarProperty Name="is_admin" ColumnName="is_admin" />
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="group_name" ColumnName="group_name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tbl_meal">
+            <EntityTypeMapping TypeName="kitchenModel.tbl_meal">
+              <MappingFragment StoreEntitySet="tbl_meal">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="meal_name" ColumnName="meal_name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tbl_menu_selection">
+            <EntityTypeMapping TypeName="kitchenModel.tbl_menu_selection">
+              <MappingFragment StoreEntitySet="tbl_menu_selection">
+                <ScalarProperty Name="qty" ColumnName="qty" />
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="id_menu" ColumnName="id_menu" />
+                <ScalarProperty Name="id_people" ColumnName="id_people" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tbl_weekday">
+            <EntityTypeMapping TypeName="kitchenModel.tbl_weekday">
+              <MappingFragment StoreEntitySet="tbl_weekday">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="weekday_name" ColumnName="weekday_name" />
+                <ScalarProperty Name="is_duty_day" ColumnName="is_duty_day" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tbl_duty">
+            <EntityTypeMapping TypeName="kitchenModel.tbl_duty">
+              <MappingFragment StoreEntitySet="tbl_duty">
+                <ScalarProperty Name="id_people" ColumnName="id_people" />
+                <ScalarProperty Name="duty_date" ColumnName="duty_date" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tbl_menu">
+            <EntityTypeMapping TypeName="kitchenModel.tbl_menu">
+              <MappingFragment StoreEntitySet="tbl_menu">
+                <ScalarProperty Name="id_meal" ColumnName="id_meal" />
+                <ScalarProperty Name="date" ColumnName="date" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tbl_people">
+            <EntityTypeMapping TypeName="kitchenModel.tbl_people">
+              <MappingFragment StoreEntitySet="tbl_people">
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="hased_pwd" ColumnName="hased_pwd" />
+                <ScalarProperty Name="id_group" ColumnName="id_group" />
+                <ScalarProperty Name="excepts_duty" ColumnName="excepts_duty" />
+                <ScalarProperty Name="takes_meal" ColumnName="takes_meal" />
+                <ScalarProperty Name="people_name" ColumnName="people_name" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tbl_settings">
+            <EntityTypeMapping TypeName="kitchenModel.tbl_settings">
+              <MappingFragment StoreEntitySet="tbl_settings">
+                <ScalarProperty Name="CookieName" ColumnName="CookieName" />
+                <ScalarProperty Name="MailBodyPattern" ColumnName="MailBodyPattern" />
+                <ScalarProperty Name="MailSubjectPattern" ColumnName="MailSubjectPattern" />
+                <ScalarProperty Name="MailHostUseSsl" ColumnName="MailHostUseSsl" />
+                <ScalarProperty Name="MailHostPort" ColumnName="MailHostPort" />
+                <ScalarProperty Name="MailHostPwd" ColumnName="MailHostPwd" />
+                <ScalarProperty Name="MailHostLogin" ColumnName="MailHostLogin" />
+                <ScalarProperty Name="MailHost" ColumnName="MailHost" />
+                <ScalarProperty Name="BaseHostAddress" ColumnName="BaseHostAddress" />
+                <ScalarProperty Name="ckey" ColumnName="ckey" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer>
+    <edmx:Connection>
+      <edmx:DesignerInfoPropertySet>
+        <edmx:DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </edmx:DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <edmx:DesignerInfoPropertySet>
+        <edmx:DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <edmx:DesignerProperty Name="EnablePluralization" Value="true" />
+        <edmx:DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <edmx:DesignerProperty Name="UseLegacyProvider" Value="true" />
+        <edmx:DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </edmx:DesignerInfoPropertySet>
+    </edmx:Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams />
+  </edmx:Designer>
+</edmx:Edmx>

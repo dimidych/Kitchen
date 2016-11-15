@@ -1,0 +1,80 @@
+﻿@using System.Linq;
+@model MvcStudy.Models.Home.MenuForUnsignedUserViewModel
+
+@{
+    ViewBag.Title = "Записать друзей на обед!";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            Выберите человека из списка ниже и отметьте галочками желаемые блюда
+        </div>
+
+        <div class="panel-body">
+            <div>
+                @Html.ValidationSummary(true, "", new {@class = "text-danger"})
+            </div>
+            @Html.HiddenFor(model => model.IsFutureWeek)
+            <div class="form-group">
+                @Html.DropDownListFor(model => model.UserId, Model.UnsignedPeople, new {@class = "form-control"})
+            </div>
+            <table class="table table-bordered table-hover table-striped table-condensed">
+                <tbody>
+                @foreach (var date in Model.WeekDays.Keys)
+                {
+                    <tr>
+                        <th scope="row" class="info">
+                            @Model.WeekDays[date]
+                        </th>
+
+                        @if (Model.MenuLst.Any(x => x.date == date))
+                        {
+                            for (var i = 0; i < Model.MenuLst.Count(); i++)
+                            {
+                                if (Model.MenuLst[i].date != date)
+                                {
+                                    continue;
+                                }
+
+                                <td>
+                                    @(date < DateTime.Now.Date ? 
+                                    Html.CheckBoxFor(model => model.MenuLst[i].Selected, new {disabled = "true"}) : 
+                                    Html.CheckBoxFor(model => model.MenuLst[i].Selected))
+                                    @Html.HiddenFor(model => model.MenuLst[i].id)
+                                    @Html.DisplayFor(model => model.MenuLst[i].MealNameView)
+                                </td>
+                                <td>
+                                    К-во :
+                                    @(date < DateTime.Now.Date ?
+                                    Html.TextBoxFor(model => model.MenuLst[i].Qty, new {@type = "number", @min = 1, @max = 250, @step = 1, @style = "width:70px;", disabled = "true"}):
+                                    Html.TextBoxFor(model => model.MenuLst[i].Qty, new {@type = "number", @min = 1, @max = 250, @step = 1, @style = "width:70px;"}))
+                                </td>
+                            }
+                        }
+                        else
+                        {
+                            <td colspan=@Model.MaxColumnCount align="center">
+                                Совсем нечего кушать!
+                            </td>
+                        }
+                    </tr>
+                }
+                </tbody>
+            </table>
+
+            <div class="container-fluid">
+                @Html.ActionLink("Отмена", "Index", "Home", null, new {@class = "btn btn-default pull-right"})
+                &nbsp;
+                <input type="submit" value="Сохранить" class="btn btn-primary pull-right"/>
+            </div>
+        </div>
+
+        <div class="panel-footer">
+
+        </div>
+    </div>
+}  

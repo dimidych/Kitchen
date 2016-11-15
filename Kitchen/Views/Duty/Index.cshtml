@@ -1,0 +1,109 @@
+﻿@model MvcStudy.Models.Duty.DutyViewModel
+
+@{
+    ViewBag.Title = "Дежурства";
+    var currentUser = ViewData["CurrentUser"];
+    var isAdmin = ViewData["IsCurrentUserInAdminRole"] ?? false;
+}
+
+<div>
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+</div>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+            Дежурства c @Model.WeekDays[Model.WeekDays.Keys.Min()] по @Model.WeekDays[Model.WeekDays.Keys.Max()]
+
+            @if (Model.CheckDutyPeopleAccepted)
+            {
+                <label class="pull-right">
+                    <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
+                    Дежурство утверждено
+                </label>
+            }
+            else
+            {
+                <label class="pull-right">
+                    <span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span>
+                    Дежурство не утверждено
+                </label>
+            }
+    </div>
+
+    <div class="panel-body ">
+        <div class="row">
+            <div class="col-md-4" style="flex-align: auto">
+                @if (!Model.CheckDutyPeopleAccepted && Model.RecordsNumber > 0 && currentUser != null && (bool)isAdmin)
+                {
+                    @Html.ActionLink("Утвердить дежурство", "AcceptedDutyPeople", "Duty", new { forFutureWeek = Model.ForFutureWeek }, new { @class = "btn btn-primary pull-left" })
+                }
+            </div>
+            <div class="col-md-4">
+                @if (Model.RecordsNumber > 0 && currentUser != null && (bool) isAdmin)
+                {
+                    @Html.ActionLink("Распечатать", "PrintDuty", "Duty", new {forFutureWeek = Model.ForFutureWeek}, new {@class = "btn btn-warning pull-right"})
+                }
+            </div>
+            <div class="col-md-4">
+                @if (!Model.ForFutureWeek && Model.CheckForFutureWeekEaters)
+                {
+                    @Html.ActionLink("Они будут дежурить на будущей неделе!", "Index", "Duty", new {forFutureWeek = true}, new {@class = "btn btn-success pull-right"})
+                }
+            </div>
+        </div>
+    </div>
+
+    @if (Model.RecordsNumber > 0)
+    {
+        <table class="table table-bordered table-hover table-striped table-condensed">
+            <tbody>
+            @foreach (var date in Model.WeekDays.Keys)
+            {
+                <tr>
+                    <th scope="row" class="info">
+                        @Html.DisplayFor(model => model.WeekDays[date])
+                    </th>
+                    <td>
+                        @if (Model.DutyPeopleLst.Any(x => x.duty_date == date))
+                        {
+                            <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                            var dutyItm = Model.DutyPeopleLst.FirstOrDefault(x => x.duty_date == date);
+                            @Html.HiddenFor(model => dutyItm.id)
+                            @Html.HiddenFor(model => dutyItm.id_people)
+                            @Html.DisplayFor(model => dutyItm.tbl_people.people_name)
+                            <br/>
+                            if (currentUser != null && (bool) isAdmin)
+                            {
+                                if (Model.CheckDutyPeopleAccepted && date >= DateTime.Now.Date)
+                                {
+                                    <p>
+                                        @Html.ActionLink("Изменить дежурного", "UpdateAcceptedDutyMan", "Duty", new {id = dutyItm.id}, new {data_modal = "", @class = "btn btn-warning btn-xs"})
+                                    </p>
+                                }
+
+                                if (date >= Model.StartPunishDate && date <= DateTime.Now.Date)
+                                {
+                                    <p>
+                                        @Html.ActionLink("Наказать дежурного", "PunishDutyMan", "Duty", new {dutyPeopleId = dutyItm.id_people}, new {data_modal = "", @class = "btn btn-danger btn-xs"})
+                                    </p>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <label class="text-muted">
+                                Дежурный не назначен
+                            </label>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+
+    <div class="panel-footer">
+        @Html.DisplayFor(model => model.RecordsNumberStr)
+    </div>
+    </div>
+

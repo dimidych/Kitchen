@@ -1,0 +1,36 @@
+﻿@model MvcStudy.Models.tbl_people
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title" id="myModalLabel">Авторизация</h4>
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="modal-body">
+        <div>
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            <label for="email">
+                E-mail пользователя :
+            </label>
+            @Html.ValidationMessage("email", new {@class = "text-danger"})<br/>
+            @Html.TextBoxFor(model => model.email, new {@class = "form-control", @type = "email", placeholder = "Введите Ваш e-mail"})
+        </div>
+        <div class="form-group">
+            <label for="hased_pwd">
+                Пароль :
+            </label>
+            @Html.ValidationMessage("pwd", new {@class = "text-danger"})<br />
+            @Html.PasswordFor(model => model.hased_pwd, new {@class = "form-control", @type = "password", placeholder = "Введите пароль"})
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <input class="btn btn-primary" type="submit" value="Войти" />
+        <button class="btn" data-dismiss="modal">Отмена</button>
+    </div>
+}

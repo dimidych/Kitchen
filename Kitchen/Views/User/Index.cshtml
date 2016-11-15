@@ -1,0 +1,43 @@
+﻿@model MvcStudy.Models.tbl_people[]
+
+@{
+    ViewBag.Title = "Пользователи";
+}
+
+<div class="panel panel-primary">
+    <div class="panel-heading">Пользователи</div>
+
+    <div class="panel-body ">
+        @Html.ActionLink("Добавить нового пользователя", "CreateUser", "User", null, new { data_modal = "", id = "btnCreate", @class = "btn btn-small btn-primary pull-right" })
+    </div>
+
+    <table class="table table-bordered table-hover table-striped table-condensed">
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td style="width: 20px">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true">
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li>@Html.ActionLink("Подробнее...", "Details", new {id = user.id}, new {data_modal = ""})</li>
+                            <li>@Html.ActionLink("Изменить", "UpdateUser", new {id = user.id, forProfile = false}, new {data_modal = ""})</li>
+                            <li class="divider"></li>
+                            <li>@Html.ActionLink("Удалить", "DeleteUser", new {id = user.id}, new {data_modal = ""})</li>
+                        </ul>
+                    </div>
+                </td>
+                <td>
+                    <small class="text-muted">
+                        @Html.DisplayFor(modelItem => user.id)
+                    </small>
+                    @Html.DisplayFor(modelItem => user.people_name)
+                </td>
+            </tr>
+        }
+    </table>
+
+    <div class="panel-footer">Всего записей - @Model.Count()</div>
+</div> 
+

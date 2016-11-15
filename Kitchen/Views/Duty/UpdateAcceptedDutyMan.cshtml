@@ -1,0 +1,28 @@
+﻿@model MvcStudy.Models.Duty.ChangingDutyManViewModel
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title" id="myModalLabel">Выберите другого дежурного</h4>
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="modal-body">
+        <div>
+            @Html.ValidationSummary(true, "", new {@class = "text-danger"})
+        </div>
+        @Html.HiddenFor(model => model.id)
+        @Html.HiddenFor(model => model.duty_date)
+            
+        <div class="form-group">
+            @Html.DropDownListFor(model => model.id_people, Model.DutySupposedPeople, new {@class = "form-control"})
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <input class="btn btn-primary" type="submit" value="Изменить дежурного" />
+        <button class="btn" data-dismiss="modal">Отмена</button>
+    </div>
+}

@@ -1,0 +1,86 @@
+﻿@using System.Linq;
+@model MvcStudy.Models.Menu.MenuCollectionViewModel
+
+@{
+    ViewBag.Title = "Меню";
+    var currentUser = ViewData["CurrentUser"];
+    var isAdmin = ViewData["IsCurrentUserInAdminRole"] ?? false;
+}
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        Меню c @Model.WeekDays[Model.WeekDays.Keys.Min()] по @Model.WeekDays[Model.WeekDays.Keys.Max()]
+    </div>
+
+    @using (Html.BeginForm("Index", null, FormMethod.Get, new {@class = "form-inline panel-body"}))
+    {
+        <div class="form-group">
+            <label class="text-muted" for="FilterDate">
+                Выберите дату недели для отображения :
+            </label>
+            @Html.TextBoxFor(model => model.FilterDate, new {@class = "form-control"})
+            <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
+        </div>
+        <button type="submit" value="Обновить" class="btn btn-primary pull-right">
+            <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+            Обновить
+        </button>
+    }
+
+    <table class="table table-bordered table-hover table-condensed">
+        @foreach (var date in Model.WeekDays.Keys)
+        {
+            <tr>
+                <td>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            @Model.WeekDays[date]
+
+                            @if (currentUser != null && (bool) isAdmin && Model.CanEditFutureMenu)
+                            {
+                                @Html.ActionLink("Добавить блюдо в меню", "AddMenu", "Menu", new {date = date}, new {data_modal = "", id = "btnCreate", @class = "btn btn-success btn-xs pull-right", style = "color: #fff"})
+                            }
+                        </div>
+                        <table class="table table-bordered table-hover table-striped table-condensed">
+                            @foreach (var menu in Model.MenusGrouppedByDate.Where(x => x.date == date))
+                            {
+                                <tr>
+                                    <td>
+                                        <span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span>
+                                        @Html.DisplayFor(modelItem => menu.tbl_meal.meal_name)
+                                        
+                                        @if (currentUser != null && (bool) isAdmin)
+                                        {
+                                            if (Model.CanEditFutureMenu)
+                                            {
+                                                @Html.ActionLink("Удалить", "DeleteMenu", new {id = menu.id}, new {data_modal = "", @class = "btn btn-danger pull-right"})
+                                            }
+                                            else if (date >= DateTime.Now.Date)
+                                            {
+                                                @Html.ActionLink("Поменять на...", "UpdateMenu", new { id = menu.id }, new { data_modal = "", @class = "btn btn-primary pull-right" })
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        }
+    </table>
+    
+    <div class="panel-footer">
+        @Html.DisplayFor(model => model.RecordsNumberStr)
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/datetimepicker") 
+    <script type="text/javascript" >
+        $(function() {
+            $('#FilterDate').datetimepicker(
+                { pickTime: false, language: 'ru' });
+        });
+    </script>
+}

@@ -1,0 +1,32 @@
+﻿@model MvcStudy.Models.tbl_meal
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title" id="myModalLabel">Изменение блюда</h4>
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="modal-body">
+        <div>
+            @Html.ValidationSummary(true, "", new {@class = "text-danger"})
+        </div>
+        @Html.HiddenFor(model => model.id)
+        <div class="form-group">
+            <label for="meal_name">
+                Наименование блюда
+            </label>
+            @Html.ValidationMessage("Name", new {@class = "text-danger"})
+            <br />
+            @Html.TextBoxFor(model => model.meal_name, new {@class = "form-control", placeholder = "Введите наименование блюда"})
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <input class="btn btn-primary" type="submit" value="Изменить блюдо" />
+        <button class="btn" data-dismiss="modal">Отмена</button>
+    </div>
+}
+

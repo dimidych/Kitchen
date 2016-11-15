@@ -1,0 +1,77 @@
+﻿@using System.Linq;
+@model MvcStudy.Models.Home.FutureWeekUserMenuViewModel
+
+@{
+    ViewBag.Title = "Запишись на обед!";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            Отметьте галочками желаемые блюда
+        </div>
+
+        <div class="panel-body">
+            <div>
+                @Html.ValidationSummary(true, "", new {@class = "text-danger"})
+            </div>
+
+            @Html.HiddenFor(model => model.UseDateFilter)
+            @Html.HiddenFor(model => model.IsFutureWeek)
+            @Html.HiddenFor(model => model.UserId)
+            <table class="table table-bordered table-hover table-striped table-condensed">
+                <tbody>
+                @foreach (var date in Model.WeekDays.Keys)
+                {
+                    <tr>
+                        <th scope="row" class="info">
+                            @Model.WeekDays[date]
+                        </th>
+
+                        @if (Model.NextWeekMenuForUser.Any(x => x.date == date))
+                        {
+                            for (var i = 0; i < Model.NextWeekMenuForUser.Count(); i++)
+                            {
+                                if (Model.NextWeekMenuForUser[i].date != date)
+                                {
+                                    continue;
+                                }
+
+                                <td>
+                                    @Html.CheckBoxFor(model => model.NextWeekMenuForUser[i].Selected)
+                                    @Html.HiddenFor(model => model.NextWeekMenuForUser[i].id)
+                                    @Html.DisplayFor(model => model.NextWeekMenuForUser[i].MealNameView)
+                                </td>
+                                <td>
+                                    К-во :
+                                    @Html.TextBoxFor(model => model.NextWeekMenuForUser[i].Qty, new {@type = "number", @min = 1, @max = 250, @step = 1, @style = "width:70px;"})
+                                </td>
+                            }
+                        }
+                        else
+                        {
+                            <td colspan=@Model.MaxColumnCount align="center">
+                                Совсем нечего кушать!
+                            </td>
+                        }
+                    </tr>
+                }
+                </tbody>
+            </table>
+
+            <div class="container-fluid">
+                @Html.ActionLink("Отмена", "Index", "Home", null, new {@class = "btn btn-default pull-right"})
+                &nbsp;
+                <input type="submit" value="Сохранить" class="btn btn-primary pull-right"/>
+            </div>
+        </div>
+
+        <div class="panel-footer">
+
+        </div>
+    </div>
+}  
+  

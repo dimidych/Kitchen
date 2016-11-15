@@ -1,0 +1,50 @@
+﻿@model MvcStudy.Models.User.UserViewModel
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title" id="myModalLabel">Регистрация нового пользователя</h4>
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="modal-body" >
+        <div>
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            <label for="people_name">
+                Имя пользователя :
+            </label>
+            @Html.ValidationMessage("Name", new {@class = "text-danger"})<br />
+            @Html.TextBoxFor(model => model.people_name, new {@class = "form-control", placeholder = "Введите ФИО"})
+        </div>
+        <div class="form-group">
+            <label for="email">
+                E-mail пользователя :
+            </label>
+            @Html.ValidationMessage("Email", new {@class = "text-danger"})<br />
+            @Html.TextBoxFor(model => model.email, new {@class = "form-control", placeholder = "Введите e-mail", @type = "email", id = "email"})
+        </div>
+        <div class="form-group">
+            <label for="hased_pwd">
+                Пароль :
+            </label>
+            @Html.ValidationMessage("Password", new {@class = "text-danger"})<br />
+            @Html.PasswordFor(model => model.hased_pwd, new {@class = "form-control", @type = "password", placeholder = "Введите пароль"})
+        </div>
+        <div class="form-group">
+            <label for="ConfirmPassword">
+                Подтверждение пароля :
+            </label>
+            @Html.ValidationMessage("ConfirmedPassword", new {@class = "text-danger"})<br />
+            @Html.PasswordFor(model => model.ConfirmPassword, new {@class = "form-control", @type = "password", placeholder = "Введите пароль еще раз"})
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <input class="btn btn-primary" type="submit" value="Зарегистрироваться" />
+        <button class="btn" data-dismiss="modal">Отмена</button>
+    </div>
+}

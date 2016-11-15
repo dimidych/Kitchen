@@ -1,0 +1,76 @@
+﻿@using MvcStudy.Utils
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Запишись на обед</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <meta name="description" content="Запишись на обед" />
+</head>
+    <body>
+        @{
+            var currentUser = ViewData["CurrentUser"];
+            var isAdmin = ViewData["IsCurrentUserInAdminRole"] ?? false;
+        }
+        <!--Панель навигации-->
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container container-fluid">
+                <ul class="nav navbar-nav">
+                    @Html.MenuItem("Записаться на обед в офисе", "Index", "Home", htmlAttributes: new { @class = "navbar-brand" })
+                    @Html.MenuItem("Меню", "Index", "Menu")
+                    @Html.MenuItem("Дежурства", "Index", "Duty")
+
+                    @if (currentUser != null && (bool)isAdmin)
+                    {
+                        @Html.MenuItem("Блюда", "Index", "Meal")
+                        @Html.MenuItem("Пользователи", "Index", "User")
+                        @Html.MenuItem("Настройки", "Index", "Settings")
+                    }
+                </ul>
+                <!--Панель авторизации-->
+                @Html.Partial("_UserLogin")
+            </div>
+        </div>
+        <!--Баннер-->
+        <div class="container body-content" style="margin-top: 60px">
+            <div class="jumbotron1">
+                <table width="100%">
+                    <tr>
+                        <td>
+                            <img src="~/Content/Images/dinner1.jpg" alt="Запишись на обед" class="img-thumbnail" />
+                        </td>
+                        <td class="text-center">
+                            Запишись на обед!
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <!--Контейнер вывода модальных форм-->
+            <div id='myModal' class='modal fade in'>
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div id='myModalContent'></div>
+                    </div>
+                </div>
+            </div>
+            <!--Контейнер вывода общих ошибок-->
+            <div>
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            </div>
+            <!--Контент страницы--> 
+            @RenderBody()  
+        </div>
+        <!--Футер страницы-->
+        <footer class="footer">
+            <div class="container">
+                <p class="pull-left">&copy; @DateTime.Now.Year - Кожомин Дмитрий</p>
+                <p class="pull-right"><a id="scroll-to-top" style="display:none;" href="#" title="Наверх"><span class="glyphicon glyphicon-arrow-up"></span> </a></p>
+            </div>
+        </footer>
+
+        @Scripts.Render("~/bundles/jquery", "~/bundles/bootstrap", "~/bundles/site", "~/bundles/jqueryval", "~/bundles/modalform")
+        @RenderSection("scripts", required: false)
+    </body>
+</html>

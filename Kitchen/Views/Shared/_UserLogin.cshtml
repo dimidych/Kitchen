@@ -1,0 +1,31 @@
+﻿@using MvcStudy.Models
+
+@{
+    var currentUser = ViewData["CurrentUser"];
+}
+
+@if (currentUser != null)
+{
+    var currUsr = ((tbl_people) currentUser);
+
+    <ul class="nav navbar-nav navbar-right">
+        <li>
+            @Html.ActionLink(string.Concat("Вы залогинились, как ", currUsr.people_name), "UpdateUser", "User",
+                new {id = currUsr.id, forProfile = true}, new {data_modal = "", @style = "font-weight: bold"})
+        </li>
+        <li>
+            @Html.ActionLink("Выход", "Logout", "User")
+        </li>
+    </ul>
+}
+else
+{
+    <ul class="nav navbar-nav navbar-right">
+        <li>
+            @Html.ActionLink("Вход", "Login", "User", null, new {data_modal = ""})
+        </li>
+        <li>
+            @Html.ActionLink("Регистрация", "RegisterUser", "User", null, new {data_modal = ""})
+        </li>
+    </ul>
+}
